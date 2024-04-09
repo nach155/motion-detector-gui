@@ -11,10 +11,9 @@ class AspectWidget(QWidget):
         self.label.setContentsMargins(0,0,0,0)
         
         self.aspect_combo_box = QComboBox()
-        self.aspect_combo_box.addItem('a')
-        self.aspect_combo_box.addItem('b')
-        self.aspect_combo_box.addItem('c')
-        self.aspect_combo_box.addItem('d')
+        self.aspect_combo_box.addItem('画面比率')
+        self.aspect_combo_box.addItem('1:1')
+        self.aspect_combo_box.addItem('自由比率')
         
         layout = QHBoxLayout()
         
