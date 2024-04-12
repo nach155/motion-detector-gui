@@ -16,7 +16,7 @@ class MainWidget(QWidget):
         self.initialize_UI()
     
     def initialize_UI(self):
-        self.directory_choice_widget = DirectoryChoiceWidget()
+        self.directory_choice_widget = DirectoryChoiceWidget(self.model)
         self.directory_choice_widget.setContentsMargins(0,0,0,0)
         
         self.aspect_widget = AspectWidget()

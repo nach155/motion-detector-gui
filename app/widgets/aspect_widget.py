@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QWidget, QComboBox, QHBoxLayout, QLabel, QSizePolicy, QStyle
+from PyQt6.QtWidgets import QWidget, QComboBox, QHBoxLayout, QLabel
 from PyQt6.QtCore import Qt
 
 class AspectWidget(QWidget):
@@ -7,8 +7,8 @@ class AspectWidget(QWidget):
         self.initialize_UI()
     
     def initialize_UI(self) -> None:
-        self.label = QLabel('縦横比')
-        self.label.setContentsMargins(0,0,0,0)
+        label = QLabel('縦横比')
+        label.setContentsMargins(0,0,0,0)
         
         self.aspect_combo_box = QComboBox()
         self.aspect_combo_box.addItem('画面比率')
@@ -18,6 +18,6 @@ class AspectWidget(QWidget):
         layout = QHBoxLayout()
         
         layout.setAlignment(Qt.AlignmentFlag.AlignLeft)
-        layout.addWidget(self.label)
+        layout.addWidget(label)
         layout.addWidget(self.aspect_combo_box)
         self.setLayout(layout)

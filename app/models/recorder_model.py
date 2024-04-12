@@ -7,5 +7,5 @@ class RecorderModel(QObject):
     
     def __init__(self):
         super().__init__()
-        self.file_path = None
+        self.directory_path = None
         self.camera_size = None

@@ -1,9 +1,12 @@
 from PyQt6.QtWidgets import QWidget, QLineEdit, QHBoxLayout, QPushButton, QFileDialog
 
+from ..models.recorder_model import RecorderModel
+
 class DirectoryChoiceWidget(QWidget):
-    def __init__(self) -> None:
+    def __init__(self,model:RecorderModel) -> None:
         super().__init__()
         self.initialize_UI()
+        self.model = model
         
     def initialize_UI(self):
         self.dir_name_widget = QLineEdit('')
@@ -21,4 +24,5 @@ class DirectoryChoiceWidget(QWidget):
         if directory_path == '':
             return
         self.directory_path = directory_path
+        self.model.directory_path = directory_path
         self.dir_name_widget.setText(self.directory_path)
