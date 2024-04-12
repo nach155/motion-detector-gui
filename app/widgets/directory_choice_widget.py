@@ -1,12 +1,15 @@
-from PyQt6.QtWidgets import QWidget, QLineEdit, QHBoxLayout, QPushButton, QFileDialog
-
-from ..models.recorder_model import RecorderModel
+from PyQt6.QtWidgets import QWidget, QLineEdit, QHBoxLayout, QPushButton, QFileDialog, QMessageBox
+from PyQt6.QtCore import pyqtSignal
+import os
 
 class DirectoryChoiceWidget(QWidget):
-    def __init__(self,model:RecorderModel) -> None:
+
+    # シグナル定義
+    submitted = pyqtSignal(str)
+    
+    def __init__(self) -> None:
         super().__init__()
         self.initialize_UI()
-        self.model = model
         
     def initialize_UI(self):
         self.dir_name_widget = QLineEdit('')
@@ -21,8 +24,10 @@ class DirectoryChoiceWidget(QWidget):
     
     def choose_directory(self) -> None:
         directory_path = QFileDialog.getExistingDirectory(self,'open',"./")
-        if directory_path == '':
-            return
-        self.directory_path = directory_path
-        self.model.directory_path = directory_path
-        self.dir_name_widget.setText(self.directory_path)
+        self.dir_name_widget.setText(directory_path)
+        # モデルに送信
+        self.submitted.emit(directory_path)
+    
+    def on_error(self,error:str) -> None:
+        QMessageBox.critical(None,"Error",error)
+        self.dir_name_widget.clear()

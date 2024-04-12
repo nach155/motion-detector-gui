@@ -4,17 +4,17 @@ from PyQt6.QtGui import QCloseEvent, QImage, QMouseEvent, QPixmap
 import cv2
 
 class CameraWidget(QWidget):
-    def __init__(self) -> None:
+    def __init__(self, width:int, height:int) -> None:
         super().__init__()
-        self.initialize_UI()
-        self.thread = VideoThread()
+        self.initialize_UI(width,height)
+        self.thread:VideoThread = VideoThread(width,height)
         self.thread.change_pixmap_signal.connect(self.update_image)
         self.thread.start()
     
-    def initialize_UI(self) -> None:
+    def initialize_UI(self,width:int, height:int) -> None:
         self.img_label = QLabel(self)
         self.img_label.setContentsMargins(0,0,0,0)
-        self.img_label.setFixedSize(640,480)
+        self.img_label.setFixedSize(width,height)
         
         
     def closeEvent(self, event: QCloseEvent | None) -> None:
@@ -38,10 +38,15 @@ class VideoThread(QThread):
     change_pixmap_signal = pyqtSignal(QImage)
     playing = True
 
+    def __init__(self, width:int, height:int) -> None:
+        super().__init__()
+        self.width = width
+        self.height = height
+    
     def run(self) -> None:
         cap = cv2.VideoCapture(0)
-        cap.set(cv2.CAP_PROP_FRAME_WIDTH,640)
-        cap.set(cv2.CAP_PROP_FRAME_HEIGHT,480)
+        cap.set(cv2.CAP_PROP_FRAME_WIDTH,self.width)
+        cap.set(cv2.CAP_PROP_FRAME_HEIGHT,self.height)
         while self.playing:
             ret, frame = cap.read()
             if ret:
