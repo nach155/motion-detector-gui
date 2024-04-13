@@ -1,6 +1,5 @@
 from PyQt6.QtWidgets import QWidget, QLineEdit, QHBoxLayout, QPushButton, QFileDialog, QMessageBox
 from PyQt6.QtCore import pyqtSignal
-import os
 
 class DirectoryChoiceWidget(QWidget):
 
@@ -28,6 +27,6 @@ class DirectoryChoiceWidget(QWidget):
         # モデルに送信
         self.submitted.emit(directory_path)
     
-    def on_error(self,error:str) -> None:
-        QMessageBox.critical(None,"Error",error)
+    def on_error(self,message:str) -> None:
+        QMessageBox.critical(None,"Error",message)
         self.dir_name_widget.clear()

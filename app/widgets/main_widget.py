@@ -60,4 +60,6 @@ class MainWidget(QWidget):
         self.directory_choice_widget.submitted.connect(self.model.set_save_directory_path)
         self.model.dir_choise_error.connect(self.directory_choice_widget.on_error)
         
-        # 
+        # カメラの解像度を切り替える
+        self.resolution_widget.submitted.connect(self.model.set_camera_size)
+        self.model.camera_size_error.connect(self.resolution_widget.on_error)

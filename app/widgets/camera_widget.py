@@ -4,8 +4,10 @@ from PyQt6.QtGui import QCloseEvent, QImage, QMouseEvent, QPixmap
 import cv2
 
 class CameraWidget(QWidget):
-    def __init__(self, width:int, height:int) -> None:
+    def __init__(self, width:int|None=None, height:int|None=None) -> None:
         super().__init__()
+        if width is None or height is None:
+            pass
         self.initialize_UI(width,height)
         self.thread:VideoThread = VideoThread(width,height)
         self.thread.change_pixmap_signal.connect(self.update_image)
@@ -42,19 +44,19 @@ class VideoThread(QThread):
         super().__init__()
         self.width = width
         self.height = height
-    
+        self.cap = cv2.VideoCapture(0)
+        self.cap.set(cv2.CAP_PROP_FRAME_WIDTH,self.width)
+        self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT,self.height)
+        
     def run(self) -> None:
-        cap = cv2.VideoCapture(0)
-        cap.set(cv2.CAP_PROP_FRAME_WIDTH,self.width)
-        cap.set(cv2.CAP_PROP_FRAME_HEIGHT,self.height)
         while self.playing:
-            ret, frame = cap.read()
+            ret, frame = self.cap.read()
             if ret:
                 h, w, ch = frame.shape
                 bytesPerLine = frame.strides[0]
                 image = QImage(frame.data, w, h, bytesPerLine, QImage.Format.Format_BGR888)
                 self.change_pixmap_signal.emit(image)
-        cap.release()
+        self.cap.release()
 
     def stop(self) -> None:
         self.playing = False
