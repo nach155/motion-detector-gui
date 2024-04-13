@@ -3,7 +3,7 @@ from PyQt6.QtCore import Qt
 
 from .camera_widget import CameraWidget
 from .directory_choice_widget import DirectoryChoiceWidget
-from .aspect_widget import AspectWidget
+from .resolution_widget import ResolutionWidget
 from .range_picker_widget import RangePickerWidget
 from .status_widget import StatusWidget
 from .shoot_widget import ShootWidget
@@ -21,8 +21,8 @@ class MainWidget(QWidget):
         self.directory_choice_widget = DirectoryChoiceWidget()
         self.directory_choice_widget.setContentsMargins(0,0,0,0)
         
-        self.aspect_widget = AspectWidget()
-        self.aspect_widget.setContentsMargins(0,0,0,0)
+        self.resolution_widget = ResolutionWidget()
+        self.resolution_widget.setContentsMargins(0,0,0,0)
         
         self.camera_widget = CameraWidget(self.model.camera_size[0],self.model.camera_size[1])
         self.camera_widget.setContentsMargins(0,0,0,0)
@@ -49,7 +49,7 @@ class MainWidget(QWidget):
         
         self.main_layout = QVBoxLayout()
         self.main_layout.addWidget(self.directory_choice_widget)
-        self.main_layout.addWidget(self.aspect_widget)
+        self.main_layout.addWidget(self.resolution_widget)
         self.main_layout.addLayout(content_layout)
         self.main_layout.addWidget(self.log_widget)
         

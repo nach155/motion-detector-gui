@@ -1,7 +1,7 @@
 # movement-recorder
 recognize movement and record.
 
-## depend on
+## depends on
 * pyqt6
 * opencv-python
 * numpy
