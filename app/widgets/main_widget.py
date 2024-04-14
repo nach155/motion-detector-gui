@@ -21,12 +21,12 @@ class MainWidget(QWidget):
         self.directory_choice_widget = DirectoryChoiceWidget()
         self.directory_choice_widget.setContentsMargins(0,0,0,0)
         
-        self.resolution_widget = ResolutionWidget()
-        self.resolution_widget.setContentsMargins(0,0,0,0)
+        # self.resolution_widget = ResolutionWidget()
+        # self.resolution_widget.setContentsMargins(0,0,0,0)
         
-        self.camera_widget = CameraWidget(self.model.camera_size[0],self.model.camera_size[1])
+        self.camera_widget = CameraWidget(self.model.camera_size[0],self.model.camera_size[1],self.model.camera_size[2])
         self.camera_widget.setContentsMargins(0,0,0,0)
-        self.camera_widget.setFixedSize(self.model.camera_size[0],self.model.camera_size[1])
+        self.camera_widget.setFixedSize(self.model.camera_size[0]*self.model.camera_size[2],self.model.camera_size[1]*self.model.camera_size[2])
         
         self.status_widget = StatusWidget()
         
@@ -49,7 +49,7 @@ class MainWidget(QWidget):
         
         self.main_layout = QVBoxLayout()
         self.main_layout.addWidget(self.directory_choice_widget)
-        self.main_layout.addWidget(self.resolution_widget)
+        # self.main_layout.addWidget(self.resolution_widget)
         self.main_layout.addLayout(content_layout)
         self.main_layout.addWidget(self.log_widget)
         
@@ -61,5 +61,6 @@ class MainWidget(QWidget):
         self.model.dir_choise_error.connect(self.directory_choice_widget.on_error)
         
         # カメラの解像度を切り替える
-        self.resolution_widget.submitted.connect(self.model.set_camera_size)
-        self.model.camera_size_error.connect(self.resolution_widget.on_error)
+        # self.resolution_widget.submitted.connect(self.model.set_camera_size)
+        # self.model.camera_size_notifier.connect(self.camera_widget.on_camera_size_changed)
+        # self.camera_widget.resize(self.model.camera_size[0],self.model.camera_size[1])

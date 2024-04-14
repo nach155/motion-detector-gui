@@ -17,9 +17,10 @@ class ResolutionWidget(QWidget):
         self.resolution_combo_box = QComboBox()
         self.resolution_combo_box.addItem('320x240')
         self.resolution_combo_box.addItem('640x480')
-        self.resolution_combo_box.addItem('1080x720')
+        self.resolution_combo_box.addItem('640x360')
+        self.resolution_combo_box.addItem('1280x720')
         self.resolution_combo_box.setCurrentIndex(1)
-        self.resolution_combo_box.currentIndexChanged.connect(self.on_resolution_change)
+        self.resolution_combo_box.currentIndexChanged.connect(self.on_resolution_changed)
         self.submitted.emit(self.resolution_combo_box.currentIndex())
         
         layout = QHBoxLayout()
@@ -29,7 +30,7 @@ class ResolutionWidget(QWidget):
         layout.addWidget(self.resolution_combo_box)
         self.setLayout(layout)
     
-    def on_resolution_change(self,index:int) -> None:
+    def on_resolution_changed(self,index:int) -> None:
         self.submitted.emit(index)
         
     def on_error(self, message:str) -> None:
