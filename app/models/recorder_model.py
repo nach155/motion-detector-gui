@@ -25,8 +25,7 @@ class RecorderModel(QObject):
             
     ## カメラサイズを設定
     def set_camera_size(self, index:int) -> None:
-    
-    
+
         if index == 0:
             self.camera_size = (640,480,0.5)
         elif index == 1:
@@ -39,3 +38,5 @@ class RecorderModel(QObject):
             self.camera_size_error.emit("値が不正です")
             return
         self.camera_size_notifier.emit(self.camera_size)
+        
+    # def 

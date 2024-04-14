@@ -4,7 +4,7 @@ from PyQt6.QtGui import QCloseEvent, QImage, QMouseEvent, QPixmap
 import cv2
 
 class CameraWidget(QWidget):
-    def __init__(self, width:int|None=None, height:int|None=None, scale:int|None=None) -> None:
+    def __init__(self, width:int|None=None, height:int|None=None, scale:float|None=None) -> None:
         super().__init__()
         if width is None or height is None:
             pass
@@ -44,7 +44,7 @@ class CameraWidget(QWidget):
         self.thread.start()
         
         # 画面サイズを変更
-        self.img_label.resize(size[0]*size[2],size[1]*size[2])
+        self.img_label.resize(int(size[0]*size[2]),int(size[1]*size[2]))
         
 class VideoThread(QThread):
 

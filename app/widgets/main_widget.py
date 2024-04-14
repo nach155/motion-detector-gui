@@ -63,4 +63,8 @@ class MainWidget(QWidget):
         # カメラの解像度を切り替える
         self.resolution_widget.submitted.connect(self.model.set_camera_size)
         self.model.camera_size_notifier.connect(self.camera_widget.on_camera_size_changed)
-        self.camera_widget.resize(self.model.camera_size[0],self.model.camera_size[1])
+        self.model.camera_size_notifier.connect(self.set_camera_widget_size)
+        
+    def set_camera_widget_size(self,size:tuple):
+        self.camera_widget.resize(int(size[0]*size[2]),int(size[1]*size[2]))
+        print(self.camera_widget.size())
