@@ -23,6 +23,8 @@ class ResolutionWidget(QWidget):
         self.resolution_combo_box.currentIndexChanged.connect(self.on_resolution_changed)
         self.submitted.emit(self.resolution_combo_box.currentIndex())
         
+        self.resolution_combo_box.setDisabled(True)
+        
         layout = QHBoxLayout()
         
         layout.setAlignment(Qt.AlignmentFlag.AlignLeft)
