@@ -26,7 +26,6 @@ class ResolutionWidget(QWidget):
         self.resolution_combo_box.setDisabled(True)
         
         layout = QHBoxLayout()
-        
         layout.setAlignment(Qt.AlignmentFlag.AlignLeft)
         layout.addWidget(label)
         layout.addWidget(self.resolution_combo_box)

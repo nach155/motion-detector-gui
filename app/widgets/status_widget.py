@@ -7,13 +7,19 @@ class StatusWidget(QWidget):
         self.initialize_UI()
     
     def initialize_UI(self) -> None:
-        self.status_label = QLabel("ステータス")
+        status_label = QLabel("ステータス")
+        status_label.setFixedWidth(60)
+        status_label.setContentsMargins(0,0,0,0)
+        
         self.status_text = QLineEdit("設定中")
         self.status_text.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.status_text.setReadOnly(True)
-        self.layout = QHBoxLayout()
-        self.layout.addWidget(self.status_label)
-        self.layout.addWidget(self.status_text)
+        self.status_text.setFixedWidth(100)
         
-        self.setLayout(self.layout)
+        layout = QHBoxLayout()
+        layout.addWidget(status_label)
+        layout.addWidget(self.status_text)
+        layout.setAlignment(Qt.AlignmentFlag.AlignLeft)
+        
+        self.setLayout(layout)
         

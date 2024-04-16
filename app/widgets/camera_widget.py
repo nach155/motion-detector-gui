@@ -11,7 +11,7 @@ class CameraWidget(QWidget):
         self.initialize_UI(width,height)
         self.thread:VideoThread = VideoThread(width,height,scale)
         self.thread.change_pixmap_signal.connect(self.update_image)
-        self.thread.start()
+        # self.thread.start()
         
     def initialize_UI(self,width:int, height:int) -> None:
         self.img_label = QLabel(self)
@@ -53,14 +53,15 @@ class VideoThread(QThread):
 
     def __init__(self, width:int, height:int, scale:float) -> None:
         super().__init__()
-        # self.width = width
-        # self.height = height
+        self.width = width
+        self.height = height
         self.scale = scale
-        self.cap = cv2.VideoCapture(0)
-        self.cap.set(cv2.CAP_PROP_FRAME_WIDTH,width)
-        self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT,height)
+        
         
     def run(self) -> None:
+        self.cap = cv2.VideoCapture(0)
+        self.cap.set(cv2.CAP_PROP_FRAME_WIDTH,self.width)
+        self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT,self.height)
         while self.playing:
             ret, frame = self.cap.read()
             if ret:
