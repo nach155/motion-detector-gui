@@ -30,14 +30,22 @@ class MainWidget(QWidget):
         
         self.log_widget = LogWidget()
         
-        self.main_layout = QVBoxLayout()
-        self.main_layout.addWidget(self.directory_choice_widget)
-        self.main_layout.addWidget(self.resolution_widget)
-        self.main_layout.addWidget(self.status_widget)
-        self.main_layout.addWidget(self.range_picker_widget)
-        self.main_layout.addWidget(self.shoot_widget)
-        self.main_layout.addWidget(self.log_widget)
+        control_layout = QVBoxLayout()
+        control_layout.addWidget(self.directory_choice_widget)
+        control_layout.addWidget(self.resolution_widget)
+        control_layout.addWidget(self.status_widget)
+        control_layout.addWidget(self.range_picker_widget)
+        control_layout.addWidget(self.shoot_widget)
+        control_layout.addWidget(self.log_widget)
         
+        self.camera_widget = CameraWidget(self.model.camera_size[0],self.model.camera_size[1],self.model.camera_size[2])
+        self.camera_widget.setContentsMargins(0,0,0,0)
+        self.camera_widget.setFixedSize(self.model.camera_size[0]*self.model.camera_size[2],self.model.camera_size[1]*self.model.camera_size[2])
+
+        self.main_layout = QHBoxLayout()
+        self.main_layout.addWidget(self.camera_widget)
+        self.main_layout.addLayout(control_layout)
+
         self.setLayout(self.main_layout)
         
     def initialize_signal_slot(self) -> None:
@@ -55,6 +63,4 @@ class MainWidget(QWidget):
     #     print(self.camera_widget.size())
     
     def camera_start(self) -> None:
-        self.camera_widget = CameraWidget(self.model.camera_size[0],self.model.camera_size[1],self.model.camera_size[2])
-        self.camera_widget.setContentsMargins(0,0,0,0)
-        self.camera_widget.setFixedSize(self.model.camera_size[0]*self.model.camera_size[2],self.model.camera_size[1]*self.model.camera_size[2])
+        pass

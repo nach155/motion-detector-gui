@@ -12,7 +12,6 @@ class ResolutionWidget(QWidget):
     
     def initialize_UI(self) -> None:
         label = QLabel('解像度')
-        label.setContentsMargins(0,0,0,0)
         
         self.resolution_combo_box = QComboBox()
         self.resolution_combo_box.addItem('320x240')

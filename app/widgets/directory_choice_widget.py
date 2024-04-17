@@ -13,8 +13,8 @@ class DirectoryChoiceWidget(QWidget):
     def initialize_UI(self):
         self.dir_name_widget = QLineEdit('')
         self.dir_name_widget.setReadOnly(True)
-        self.dir_name_widget.setFixedWidth(300)
-        self.dir_name_button = QPushButton('choose directory',clicked=self.choose_directory)
+        self.dir_name_widget.setFixedWidth(200)
+        self.dir_name_button = QPushButton('保存先',clicked=self.choose_directory)
         
         self.layout = QHBoxLayout()
         self.layout.addWidget(self.dir_name_widget)
