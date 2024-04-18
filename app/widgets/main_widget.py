@@ -58,6 +58,14 @@ class MainWidget(QWidget):
         # self.model.camera_size_notifier.connect(self.camera_widget.on_camera_size_changed)
         # self.model.camera_size_notifier.connect(self.set_camera_widget_size)
         
+        # カメラスタートを押す
+        self.shoot_widget.camera_start_submitted.connect(self.model.set_camera_start)
+        self.model.camera_start_notifier.connect(self.camera_widget.start_camera)
+        
+        # カメラストップ押す
+        self.shoot_widget.camera_stop_submitted.connect(self.model.set_camera_stop)
+        self.model.camera_stop_notifier.connect(self.camera_widget.stop_camera)
+        
     # def set_camera_widget_size(self,size:tuple):
     #     self.camera_widget.resize(int(size[0]*size[2]),int(size[1]*size[2]))
     #     print(self.camera_widget.size())

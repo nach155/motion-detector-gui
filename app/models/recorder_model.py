@@ -8,11 +8,16 @@ class RecorderModel(QObject):
     ## 画面サイズエラー
     camera_size_error = pyqtSignal(str)
     camera_size_notifier = pyqtSignal(tuple)
+    ## カメラスタート
+    camera_start_notifier = pyqtSignal()
+    ## カメラストップ
+    camera_stop_notifier = pyqtSignal()
     
     def __init__(self):
         super().__init__()
         self.directory_path = None
         self.camera_size = (640,480,1)
+        self.camera_start = False
         
     ## 保存先を設定
     def set_save_directory_path(self, directory_path:str) -> None:
@@ -39,4 +44,11 @@ class RecorderModel(QObject):
             return
         self.camera_size_notifier.emit(self.camera_size)
         
-    # def 
+    def set_camera_start(self) -> None:
+        self.camera_start = True
+        self.camera_start_notifier.emit()
+    
+    def set_camera_stop(self) -> None:
+        self.camera_start = False
+        self.camera_stop_notifier.emit()
+        

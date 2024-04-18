@@ -45,6 +45,14 @@ class CameraWidget(QWidget):
         
         # 画面サイズを変更
         self.img_label.resize(int(size[0]*size[2]),int(size[1]*size[2]))
+    
+    def start_camera(self) -> None:
+        print("start camera")
+        self.thread.start()
+    
+    def stop_camera(self) -> None:
+        print("stop camera")
+        self.thread.stop()
         
 class VideoThread(QThread):
 
@@ -56,12 +64,14 @@ class VideoThread(QThread):
         self.width = width
         self.height = height
         self.scale = scale
-        
+        self.cap = None
         
     def run(self) -> None:
-        self.cap = cv2.VideoCapture(0)
-        self.cap.set(cv2.CAP_PROP_FRAME_WIDTH,self.width)
-        self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT,self.height)
+        self.playing = True
+        if self.cap is None:
+            self.cap = cv2.VideoCapture(0)
+            self.cap.set(cv2.CAP_PROP_FRAME_WIDTH,self.width)
+            self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT,self.height)
         while self.playing:
             ret, frame = self.cap.read()
             if ret:
@@ -72,9 +82,11 @@ class VideoThread(QThread):
                 image = QImage(frame.data, w, h, bytesPerLine, QImage.Format.Format_BGR888)
                 self.change_pixmap_signal.emit(image)
             else:
-                raise
+                break
         self.cap.release()
-
+        print("camera released.")
+        self.cap = None
+        
     def stop(self) -> None:
         self.playing = False
-        self.terminate()
+        self.quit()
