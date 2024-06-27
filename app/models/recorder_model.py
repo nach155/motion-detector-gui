@@ -44,10 +44,12 @@ class RecorderModel(QObject):
             return
         self.camera_size_notifier.emit(self.camera_size)
         
+    ## カメラスタート
     def set_camera_start(self) -> None:
         self.camera_start = True
         self.camera_start_notifier.emit()
     
+    ## カメラ停止
     def set_camera_stop(self) -> None:
         self.camera_start = False
         self.camera_stop_notifier.emit()
