@@ -63,4 +63,9 @@ class RangePickerWidget(QWidget):
         self.range_bottom_right_y.setValue(480)
         self.set_range_submitted.emit(((0,0),(640,480)))
         # self.reset_range_submitted.emit(((0,0),(640,480)))
-        
+    
+    def set_dragend_range(self,range) -> None:
+        self.range_top_left_x.setValue(range[0][0])
+        self.range_top_left_y.setValue(range[0][1])
+        self.range_bottom_right_x.setValue(range[1][0])
+        self.range_bottom_right_y.setValue(range[1][1])

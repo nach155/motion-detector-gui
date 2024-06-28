@@ -4,6 +4,9 @@ from PyQt6.QtGui import QCloseEvent, QImage, QMouseEvent, QPixmap, QPainter, QPe
 import cv2
 
 class CameraWidget(QWidget):
+    
+    dragend_submitted = pyqtSignal(tuple)
+    
     def __init__(self, width:int|None=None, height:int|None=None, scale:float|None=None) -> None:
         super().__init__()
         if width is None or height is None:
@@ -38,19 +41,28 @@ class CameraWidget(QWidget):
         return super().mousePressEvent(event)
     
     def mouseReleaseEvent(self, event: QMouseEvent | None) -> None:
-        self.mouse_release_position = (int(event.position().x()),int(event.position().y()))
-        print(self.mouse_release_position)        
+        self.mouse_release_position = (min(int(event.position().x()),640),min(int(event.position().y()),480))
+        print(self.mouse_release_position)
+        self.dragend_submitted.emit(
+            (self.mouse_press_position,
+             self.mouse_release_position)
+        )
         return super().mouseReleaseEvent(event)
     
     def mouseMoveEvent(self, event: QMouseEvent | None) -> None:
-        self.mouse_release_position = (int(event.position().x()),int(event.position().y()))
+        self.mouse_release_position = (min(int(event.position().x()),640),min(int(event.position().y()),480))
         return super().mouseMoveEvent(event)
     
     def _drawRectAngle(self):
         canvas = self.img_label.pixmap()
         painter = QPainter(canvas)
         painter.setPen(self.pen)
-        painter.drawRect(self.mouse_press_position[0],self.mouse_press_position[1], (self.mouse_release_position[0] - self.mouse_press_position[0]),(self.mouse_release_position[1] - self.mouse_press_position[1]))
+        painter.drawRect(
+            self.mouse_press_position[0],
+            self.mouse_press_position[1], 
+            (self.mouse_release_position[0] - self.mouse_press_position[0]),
+            (self.mouse_release_position[1] - self.mouse_press_position[1])
+        )
         painter.end()
         self.img_label.setPixmap(canvas)
     

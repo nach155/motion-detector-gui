@@ -70,6 +70,10 @@ class MainWidget(QWidget):
         self.range_picker_widget.set_range_submitted.connect(self.model.set_detect_range)
         self.model.detect_range_notifier.connect(self.camera_widget.set_detect_range)
         
+        # ドラッグ&ドロップで範囲指定
+        self.camera_widget.dragend_submitted.connect(self.model.set_dragend_range)
+        self.model.dragend_notifier.connect(self.range_picker_widget.set_dragend_range)
+        
     # def set_camera_widget_size(self,size:tuple):
     #     self.camera_widget.resize(int(size[0]*size[2]),int(size[1]*size[2]))
     #     print(self.camera_widget.size())
