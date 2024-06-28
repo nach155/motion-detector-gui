@@ -78,6 +78,10 @@ class CameraWidget(QWidget):
         print("stop camera")
         self.video_thread.stop()
         
+    def set_detect_range(self, range:tuple) -> None:
+        self.mouse_press_position = range[0]
+        self.mouse_release_position = range[1]
+        
 class VideoThread(QThread):
 
     change_pixmap_signal = pyqtSignal(QImage)

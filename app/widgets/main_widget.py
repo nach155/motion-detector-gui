@@ -66,6 +66,10 @@ class MainWidget(QWidget):
         self.shoot_widget.camera_stop_submitted.connect(self.model.set_camera_stop)
         self.model.camera_stop_notifier.connect(self.camera_widget.stop_camera)
         
+        # 範囲設定を押す or 範囲選択リセットを押す
+        self.range_picker_widget.set_range_submitted.connect(self.model.set_detect_range)
+        self.model.detect_range_notifier.connect(self.camera_widget.set_detect_range)
+        
     # def set_camera_widget_size(self,size:tuple):
     #     self.camera_widget.resize(int(size[0]*size[2]),int(size[1]*size[2]))
     #     print(self.camera_widget.size())

@@ -13,11 +13,16 @@ class RecorderModel(QObject):
     ## カメラストップ
     camera_stop_notifier = pyqtSignal()
     
+    ## 検知範囲
+    detect_range_notifier = pyqtSignal(tuple)
+    
     def __init__(self):
         super().__init__()
         self.directory_path = None
         self.camera_size = (640,480,1)
         self.camera_start = False
+        
+        self.detect_range = ((0,0),(640,480))
         
     ## 保存先を設定
     def set_save_directory_path(self, directory_path:str) -> None:
@@ -53,4 +58,8 @@ class RecorderModel(QObject):
     def set_camera_stop(self) -> None:
         self.camera_start = False
         self.camera_stop_notifier.emit()
-        
+    
+    def set_detect_range(self, range) -> None:
+        self.detect_range = range
+        print("set detect range")
+        self.detect_range_notifier.emit(self.detect_range)
