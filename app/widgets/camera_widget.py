@@ -24,12 +24,16 @@ class CameraWidget(QWidget):
         self.img_label.setContentsMargins(0,0,0,0)
         self.img_label.setFixedSize(width,height)
         
+        self.pen = QPen()
+        self.pen.setWidth(3)
+        self.pen.setColor(QColor('#FF0000'))
+        
     def closeEvent(self, event: QCloseEvent | None) -> None:
         self.video_thread.terminate()
         event.accept()
         
     def mousePressEvent(self, event: QMouseEvent | None) -> None:
-        self.mouse_press_position = (int(event.position().x()),int(event.position().y()))
+        self.mouse_press_position = self.mouse_release_position = (int(event.position().x()),int(event.position().y()))
         print(self.mouse_press_position)
         return super().mousePressEvent(event)
     
@@ -38,13 +42,14 @@ class CameraWidget(QWidget):
         print(self.mouse_release_position)        
         return super().mouseReleaseEvent(event)
     
+    def mouseMoveEvent(self, event: QMouseEvent | None) -> None:
+        self.mouse_release_position = (int(event.position().x()),int(event.position().y()))
+        return super().mouseMoveEvent(event)
+    
     def _drawRectAngle(self):
         canvas = self.img_label.pixmap()
-        pen = QPen()
-        pen.setWidth(3)
-        pen.setColor(QColor('#FF0000'))
         painter = QPainter(canvas)
-        painter.setPen(pen)
+        painter.setPen(self.pen)
         painter.drawRect(self.mouse_press_position[0],self.mouse_press_position[1], (self.mouse_release_position[0] - self.mouse_press_position[0]),(self.mouse_release_position[1] - self.mouse_press_position[1]))
         painter.end()
         self.img_label.setPixmap(canvas)
