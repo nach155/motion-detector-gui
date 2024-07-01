@@ -80,13 +80,13 @@ class CameraWidget(QWidget):
         self.img_label.setPixmap(QPixmap.fromImage(self.cv_to_QImage(result_frame)))
         self._drawRectAngle()
         
-    def QImage_to_cv(self, qimage):
+    def QImage_to_cv(self, qimage:QImage):
         w, h, d = qimage.size().width(), qimage.size().height(), qimage.depth()
         bytes_ = qimage.bits().asstring(w * h * d // 8)
         arr = np.frombuffer(bytes_, dtype=np.uint8).reshape((h, w, d // 8))
         return arr
     
-    def cv_to_QImage(self, frame):
+    def cv_to_QImage(self, frame:np.ndarray):
         h, w, ch = frame.shape
         bytesPerLine = frame.strides[0]
         image = QImage(frame.data, w, h, bytesPerLine, QImage.Format.Format_BGR888)
@@ -155,6 +155,7 @@ class CameraWidget(QWidget):
         # cv2.rectangle(frame,(start_x,start_y),(end_x,end_y),RECOGNIZE_RANGE_COLOR,2)
         return frame, movement
         
+    
 class VideoThread(QThread):
 
     # change_pixmap_signal = pyqtSignal(QImage)

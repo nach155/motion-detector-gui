@@ -1,14 +1,14 @@
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout
 from PyQt6.QtCore import Qt
 
-from .camera_widget import CameraWidget
-from .directory_choice_widget import DirectoryChoiceWidget
-from .resolution_widget import ResolutionWidget
-from .range_picker_widget import RangePickerWidget
-from .status_widget import StatusWidget
-from .shoot_widget import ShootWidget
-from .log_widget import LogWidget
-from ..models.recorder_model import RecorderModel
+from .widgets.camera_widget import CameraWidget
+from .widgets.directory_choice_widget import DirectoryChoiceWidget
+from .widgets.resolution_widget import ResolutionWidget
+from .widgets.range_picker_widget import RangePickerWidget
+from .widgets.status_widget import StatusWidget
+from .widgets.shoot_widget import ShootWidget
+from .widgets.log_widget import LogWidget
+from .models.recorder_model import RecorderModel
 
 class MainWidget(QWidget):
     def __init__(self, model: RecorderModel) -> None:
