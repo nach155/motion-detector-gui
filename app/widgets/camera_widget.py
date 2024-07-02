@@ -1,7 +1,7 @@
 from PyQt6.QtWidgets import QWidget, QLabel
 from PyQt6.QtCore import pyqtSignal, QThread, pyqtSlot
 from PyQt6.QtGui import QCloseEvent, QImage, QMouseEvent, QPixmap, QPainter, QPen, QColor
-import cv2, datetime
+import cv2, datetime, os
 import numpy as np
 
 class CameraWidget(QWidget):
@@ -22,6 +22,8 @@ class CameraWidget(QWidget):
         self.mouse_press_position = (0,0)
         self.mouse_release_position = (640,480)
         self.detect_range = (self.mouse_press_position,self.mouse_release_position)
+        
+        self.save_dir = os.getcwd()
         
         # 動体検知
         self.previous_frame = None
@@ -75,9 +77,9 @@ class CameraWidget(QWidget):
         self.img_label.setPixmap(canvas)
     
     @pyqtSlot(np.ndarray)
-    def update_image(self, frame:np.ndarray):        
+    def update_image(self, frame:np.ndarray):
+        cv2.putText(frame, datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), (20,20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255,255), 1, cv2.LINE_AA)
         result_frame, movement = self.move_recognize(frame)
-        cv2.putText(result_frame, datetime.datetime.now().strftime('%Y,%m,%d %H:%M:%S'), (0,20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255,255), 1, cv2.LINE_AA)
         self.img_label.setPixmap(QPixmap.fromImage(self.cv_to_QImage(result_frame)))
         self._drawRectAngle()
         
@@ -119,7 +121,7 @@ class CameraWidget(QWidget):
         self.detect_range = range
         self.previous_frame = None
         
-    # 動体検知
+    ## 動体検知
     def move_recognize(self, frame: np.ndarray) -> tuple[np.ndarray,bool]:
         # 画像をトリミング
         trim = frame[
@@ -156,6 +158,9 @@ class CameraWidget(QWidget):
         # cv2.rectangle(frame,(start_x,start_y),(end_x,end_y),RECOGNIZE_RANGE_COLOR,2)
         return frame, movement
         
+    ## 保存先
+    def set_save_dir(self, directory_path: str) -> None:
+        self.save_dir = directory_path
     
 class VideoThread(QThread):
 
@@ -193,5 +198,15 @@ class VideoThread(QThread):
         self.playing = False
         self.quit()
         
-class VideoRecorder(object):
-    pass
+class VideoRecorder(QThread):
+    save_frame_signal = pyqtSignal(np.ndarray)
+    max_recording_time = 60*5
+    
+    def __init__(self) -> None:
+        pass
+    
+    def run(self) -> None:
+        pass
+    
+    def stop(self) -> None:
+        pass

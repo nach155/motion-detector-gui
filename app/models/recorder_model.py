@@ -2,9 +2,10 @@ from PyQt6.QtCore import QObject, pyqtSignal
 import os
 
 class RecorderModel(QObject):
-    # エラーシグナル
     ## 保存先エラー
     dir_choise_error = pyqtSignal(str)
+    ## 保存先
+    dir_choise_notifier = pyqtSignal(str)
     ## 画面サイズエラー
     camera_size_error = pyqtSignal(str)
     camera_size_notifier = pyqtSignal(tuple)
@@ -18,7 +19,7 @@ class RecorderModel(QObject):
     
     def __init__(self):
         super().__init__()
-        self.directory_path = None
+        self.directory_path = os.getcwd()
         self.camera_size = (640,480,1)
         self.camera_start = False
         
@@ -28,6 +29,7 @@ class RecorderModel(QObject):
     def set_save_directory_path(self, directory_path:str) -> None:
         if os.path.isdir(directory_path):
             self.directory_path = directory_path
+            self.dir_choise_notifier.emit(directory_path)
         elif directory_path == "":
             self.dir_choise_error.emit("保存先を入力してください")
         else:
@@ -59,11 +61,13 @@ class RecorderModel(QObject):
         self.camera_start = False
         self.camera_stop_notifier.emit()
     
+    ## 検知範囲を変更
     def set_detect_range(self, range) -> None:
         self.detect_range = range
         print("set detect range")
         self.detect_range_notifier.emit(self.detect_range)
-        
+
+    ## 検知範囲を変更(ドラッグ&ドロップ)
     def set_dragend_range(self, range) -> None:
         self.detect_range = range
         self.dragend_notifier.emit(self.detect_range)

@@ -51,6 +51,7 @@ class MainWidget(QWidget):
     def initialize_signal_slot(self) -> None:
         # 保存先のディレクトリを指定する
         self.directory_choice_widget.submitted.connect(self.model.set_save_directory_path)
+        self.model.dir_choise_notifier.connect(self.camera_widget.set_save_dir)
         self.model.dir_choise_error.connect(self.directory_choice_widget.on_error)
         
         # カメラの解像度を切り替える

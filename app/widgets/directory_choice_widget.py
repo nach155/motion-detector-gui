@@ -1,5 +1,6 @@
 from PyQt6.QtWidgets import QWidget, QLineEdit, QHBoxLayout, QPushButton, QFileDialog, QMessageBox
 from PyQt6.QtCore import pyqtSignal
+import os
 
 class DirectoryChoiceWidget(QWidget):
 
@@ -11,7 +12,7 @@ class DirectoryChoiceWidget(QWidget):
         self.initialize_UI()
         
     def initialize_UI(self):
-        self.dir_name_widget = QLineEdit('')
+        self.dir_name_widget = QLineEdit(f'{os.getcwd()}')
         self.dir_name_widget.setReadOnly(True)
         self.dir_name_widget.setFixedWidth(200)
         self.dir_name_button = QPushButton('保存先',clicked=self.choose_directory)
