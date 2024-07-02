@@ -1,12 +1,13 @@
 from PyQt6.QtWidgets import QWidget, QLabel
 from PyQt6.QtCore import pyqtSignal, QThread, pyqtSlot
 from PyQt6.QtGui import QCloseEvent, QImage, QMouseEvent, QPixmap, QPainter, QPen, QColor
-import cv2
+import cv2, datetime
 import numpy as np
 
 class CameraWidget(QWidget):
     
     dragend_submitted = pyqtSignal(tuple)
+    movement_submitted = pyqtSignal(bool)
     
     def __init__(self, width:int|None=None, height:int|None=None, scale:float|None=None) -> None:
         super().__init__()
@@ -76,7 +77,7 @@ class CameraWidget(QWidget):
     @pyqtSlot(np.ndarray)
     def update_image(self, frame:np.ndarray):        
         result_frame, movement = self.move_recognize(frame)
-        
+        cv2.putText(result_frame, datetime.datetime.now().strftime('%Y,%m,%d %H:%M:%S'), (0,20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255,255), 1, cv2.LINE_AA)
         self.img_label.setPixmap(QPixmap.fromImage(self.cv_to_QImage(result_frame)))
         self._drawRectAngle()
         
@@ -119,7 +120,7 @@ class CameraWidget(QWidget):
         self.previous_frame = None
         
     # 動体検知
-    def move_recognize(self, frame: np.ndarray):
+    def move_recognize(self, frame: np.ndarray) -> tuple[np.ndarray,bool]:
         # 画像をトリミング
         trim = frame[
             self.detect_range[0][1]:self.detect_range[1][1],
@@ -147,8 +148,8 @@ class CameraWidget(QWidget):
             x = x + self.detect_range[0][0]
             y = y + self.detect_range[0][1]
             if w < 30 or h < 30: continue # 小さな変更点は無視
-            if movement is False:
-                movement = True
+            if not movement:
+                movement = not movement
                 # break
             cv2.rectangle(frame, (x, y), (x+w, y+h), (0,255,0), 2)
         # 認識範囲を表示
@@ -191,3 +192,6 @@ class VideoThread(QThread):
     def stop(self) -> None:
         self.playing = False
         self.quit()
+        
+class VideoRecorder(object):
+    pass
