@@ -1,7 +1,7 @@
 from PyQt6.QtWidgets import QWidget, QLabel
 from PyQt6.QtCore import pyqtSignal, QThread, pyqtSlot
 from PyQt6.QtGui import QCloseEvent, QImage, QMouseEvent, QPixmap, QPainter, QPen, QColor
-import cv2, datetime, os
+import cv2, datetime, os, time
 import numpy as np
 
 class CameraWidget(QWidget):
@@ -16,18 +16,20 @@ class CameraWidget(QWidget):
         self.initialize_UI(width,height)
         
         # カメラのスレッド
-        self.video_thread:VideoThread = VideoThread(width,height,scale)
+        self.video_thread:VideoThread = VideoThread(width,height,scale,10)
         self.video_thread.frame_signal.connect(self.update_image)
         
         self.mouse_press_position = (0,0)
         self.mouse_release_position = (640,480)
         self.detect_range = (self.mouse_press_position,self.mouse_release_position)
         
-        self.save_dir = os.getcwd()
+        # 録画
+        self.recorder = VideoRecorder(os.getcwd(),width,height,10)
         
         # 動体検知
+        self.is_detecting = False
         self.previous_frame = None
-        # self.video_thread.start()
+        self.start_camera()
         
     def initialize_UI(self,width:int, height:int) -> None:
         self.img_label = QLabel(self)
@@ -79,7 +81,20 @@ class CameraWidget(QWidget):
     @pyqtSlot(np.ndarray)
     def update_image(self, frame:np.ndarray):
         cv2.putText(frame, datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), (20,20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255,255), 1, cv2.LINE_AA)
+        original_frame = np.copy(frame)        
         result_frame, movement = self.move_recognize(frame)
+        if self.is_detecting:
+            if movement:
+                self.recorder.last_movement_time = time.time()
+                if self.recorder.writer is None:
+                    self.recorder.setup_recorder()
+            if self.recorder.writer is not None:
+                self.recorder.append_frame(original_frame)
+                if self.recorder.stop_more_than_margin_time():
+                    self.recorder.recorder_release()
+        else:
+            if self.recorder.writer is not None:
+                self.recorder.recorder_release()
         self.img_label.setPixmap(QPixmap.fromImage(self.cv_to_QImage(result_frame)))
         self._drawRectAngle()
         
@@ -160,7 +175,18 @@ class CameraWidget(QWidget):
         
     ## 保存先
     def set_save_dir(self, directory_path: str) -> None:
-        self.save_dir = directory_path
+        self.recorder.set_save_dir(directory_path)
+    
+    ## 検知開始
+    def start_detect(self)->None:
+        print("start detect")
+        self.is_detecting = True
+    
+    ## 検知終了
+    def stop_detect(self)->None:
+        print("end detect")
+        self.is_detecting = False
+    
     
 class VideoThread(QThread):
 
@@ -168,11 +194,12 @@ class VideoThread(QThread):
     frame_signal = pyqtSignal(np.ndarray)
     playing = True
 
-    def __init__(self, width:int, height:int, scale:float) -> None:
+    def __init__(self, width:int, height:int, scale:float,fps:int) -> None:
         super().__init__()
         self.width = width
         self.height = height
         self.scale = scale
+        self.fps = fps
         self.cap = None
         
     def run(self) -> None:
@@ -198,15 +225,36 @@ class VideoThread(QThread):
         self.playing = False
         self.quit()
         
-class VideoRecorder(QThread):
-    save_frame_signal = pyqtSignal(np.ndarray)
-    max_recording_time = 60*5
+class VideoRecorder(object):
+    def __init__(self,save_dir:str, width:int, height:int, fps:int)->None:
+        self.save_dir = save_dir
+        self.width = width
+        self.height = height
+        self.fps = fps
+        self.margin_time = 5
+        self.writer = None
+        self.last_movement_time = None
+        self.init_recording_time = None
+        self.is_recording = False
     
-    def __init__(self) -> None:
-        pass
+    def set_save_dir(self, save_dir:str)->None:
+        self.save_dir = save_dir
+        
+    def setup_recorder(self) -> None:
+        print("recorder setup")
+        self.is_recording = True
+        file_name = f"{self.save_dir}/{datetime.datetime.fromtimestamp(int(time.time())).strftime('%Y-%m-%d-%H_%M_%S')}.avi"
+        self.writer = cv2.VideoWriter(file_name, cv2.VideoWriter_fourcc('D', 'I', 'V', '3'), self.fps, (self.width,self.height))
+        self.init_recording_time = time.time()
+        
+    def recorder_release(self) -> None:
+        print("recorder release")
+        self.is_recording = False
+        self.writer.release()
+        self.writer = None
     
-    def run(self) -> None:
-        pass
+    def append_frame(self, frame:np.ndarray) -> None:
+        self.writer.write(frame)
     
-    def stop(self) -> None:
-        pass
+    def stop_more_than_margin_time(self) -> bool:
+        return (time.time() - self.last_movement_time) > self.margin_time

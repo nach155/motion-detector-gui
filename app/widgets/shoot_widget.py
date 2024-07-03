@@ -5,6 +5,8 @@ class ShootWidget(QWidget):
     
     camera_start_submitted = pyqtSignal()
     camera_stop_submitted = pyqtSignal()
+    detect_start_submitted = pyqtSignal()
+    detect_stop_submitted = pyqtSignal()
     
     def __init__(self) -> None:
         super().__init__()
@@ -12,14 +14,14 @@ class ShootWidget(QWidget):
     
     def initialize_UII(self) -> None:
         
-        self.camera_start_button = QPushButton("カメラ起動",clicked=self.on_start_clicked)
-        self.camera_stop_button = QPushButton("カメラ停止",clicked=self.on_stop_clicked)
+        self.camera_start_button = QPushButton("カメラ起動",clicked=self.on_camera_start_clicked)
+        self.camera_stop_button = QPushButton("カメラ停止",clicked=self.on_camera_stop_clicked)
         camera_layout = QHBoxLayout()
         camera_layout.addWidget(self.camera_start_button)
         camera_layout.addWidget(self.camera_stop_button)
         
-        self.shoot_start_button = QPushButton("検知開始")
-        self.shoot_stop_button = QPushButton("検知終了")
+        self.shoot_start_button = QPushButton("検知開始",clicked=self.on_detect_start_clicked)
+        self.shoot_stop_button = QPushButton("検知終了",clicked=self.on_detect_stop_clicked)
         
         shoot_layout = QHBoxLayout()
         shoot_layout.addWidget(self.shoot_start_button)
@@ -31,8 +33,14 @@ class ShootWidget(QWidget):
         
         self.setLayout(self.layout)
         
-    def on_start_clicked(self) -> None:
+    def on_camera_start_clicked(self) -> None:
         self.camera_start_submitted.emit()
         
-    def on_stop_clicked(self) -> None:
+    def on_camera_stop_clicked(self) -> None:
         self.camera_stop_submitted.emit()
+        
+    def on_detect_start_clicked(self)->None:
+        self.detect_start_submitted.emit()
+        
+    def on_detect_stop_clicked(self)->None:
+        self.detect_stop_submitted.emit()
