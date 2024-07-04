@@ -8,7 +8,10 @@ class LogWidget(QWidget):
         
     def initialize_UI(self) -> None:
         self.log_textarea = QTextEdit()
-        self.layout = QVBoxLayout()
+        self.layout:QVBoxLayout = QVBoxLayout()
         self.layout.addWidget(self.log_textarea)
         
         self.setLayout(self.layout)
+        
+    def append_log(self, log:str) -> None:
+        self.log_textarea.append(log)

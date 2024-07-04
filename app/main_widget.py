@@ -75,11 +75,15 @@ class MainWidget(QWidget):
         self.camera_widget.dragend_submitted.connect(self.model.set_dragend_range)
         self.model.dragend_notifier.connect(self.range_picker_widget.set_dragend_range)
         
-        # 検知開始/終了押す
+        # 検知開始押す
         self.shoot_widget.detect_start_submitted.connect(self.model.set_detect_start)
         self.model.detect_start_notifier.connect(self.camera_widget.start_detect)
+        self.model.detect_start_notifier.connect(self.status_widget.set_detect_start_status)
+        
+        # 検知終了押す
         self.shoot_widget.detect_stop_submitted.connect(self.model.set_detect_stop)
         self.model.detect_stop_notifier.connect(self.camera_widget.stop_detect)
+        self.model.detect_stop_notifier.connect(self.status_widget.set_detect_stop_status)
         
         
     # def set_camera_widget_size(self,size:tuple):

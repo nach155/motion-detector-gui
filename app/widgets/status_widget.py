@@ -21,4 +21,10 @@ class StatusWidget(QWidget):
         layout.setAlignment(Qt.AlignmentFlag.AlignLeft)
         
         self.setLayout(layout)
-        
+    
+    def set_detect_start_status(self) -> None:
+        print("検知中")
+        self.status_text.setText("検知中")
+    
+    def set_detect_stop_status(self) -> None:
+        self.status_text.setText("設定中")
