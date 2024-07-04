@@ -79,16 +79,17 @@ class MainWidget(QWidget):
         self.shoot_widget.detect_start_submitted.connect(self.model.set_detect_start)
         self.model.detect_start_notifier.connect(self.camera_widget.start_detect)
         self.model.detect_start_notifier.connect(self.status_widget.set_detect_start_status)
-        
+
         # 検知終了押す
         self.shoot_widget.detect_stop_submitted.connect(self.model.set_detect_stop)
         self.model.detect_stop_notifier.connect(self.camera_widget.stop_detect)
         self.model.detect_stop_notifier.connect(self.status_widget.set_detect_stop_status)
         
+        # ログ関連
+        self.camera_widget.log_submitted.connect(self.model.append_log)
+        self.model.log_append_notifier.connect(self.log_widget.append_log)
         
     # def set_camera_widget_size(self,size:tuple):
     #     self.camera_widget.resize(int(size[0]*size[2]),int(size[1]*size[2]))
     #     print(self.camera_widget.size())
     
-    def camera_start(self) -> None:
-        pass

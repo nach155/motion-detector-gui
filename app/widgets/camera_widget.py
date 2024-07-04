@@ -9,6 +9,8 @@ class CameraWidget(QWidget):
     dragend_submitted = pyqtSignal(tuple)
     movement_submitted = pyqtSignal(bool)
     
+    log_submitted = pyqtSignal(str)
+    
     def __init__(self, width:int|None=None, height:int|None=None, scale:float|None=None) -> None:
         super().__init__()
         if width is None or height is None:
@@ -80,7 +82,8 @@ class CameraWidget(QWidget):
     
     @pyqtSlot(np.ndarray)
     def update_image(self, frame:np.ndarray):
-        cv2.putText(frame, datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), (20,20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255,255), 1, cv2.LINE_AA)
+        current_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        cv2.putText(frame, current_time, (20,20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255,255), 1, cv2.LINE_AA)
         original_frame = np.copy(frame)        
         result_frame, movement = self.move_recognize(frame)
         if self.is_detecting:
@@ -88,13 +91,17 @@ class CameraWidget(QWidget):
                 self.recorder.last_movement_time = time.time()
                 if self.recorder.writer is None:
                     self.recorder.setup_recorder()
+                    self.log_submitted.emit(f"録画開始 : {current_time}")
             if self.recorder.writer is not None:
                 self.recorder.append_frame(original_frame)
                 if self.recorder.stop_more_than_margin_time():
                     self.recorder.recorder_release()
-        else:
-            if self.recorder.writer is not None:
+                    self.log_submitted.emit(f"録画終了 : {current_time}")
+        
+        elif self.recorder.writer is not None:
                 self.recorder.recorder_release()
+                self.log_submitted.emit(f"録画終了 : {current_time}")
+                
         self.img_label.setPixmap(QPixmap.fromImage(self.cv_to_QImage(result_frame)))
         self._drawRectAngle()
         
@@ -179,12 +186,10 @@ class CameraWidget(QWidget):
     
     ## 検知開始
     def start_detect(self)->None:
-        print("start detect")
         self.is_detecting = True
     
     ## 検知終了
     def stop_detect(self)->None:
-        print("end detect")
         self.is_detecting = False
     
     

@@ -1,4 +1,3 @@
-from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QWidget, QTextEdit, QVBoxLayout
 
 class LogWidget(QWidget):
@@ -10,7 +9,6 @@ class LogWidget(QWidget):
         self.log_textarea = QTextEdit()
         self.layout:QVBoxLayout = QVBoxLayout()
         self.layout.addWidget(self.log_textarea)
-        
         self.setLayout(self.layout)
         
     def append_log(self, log:str) -> None:

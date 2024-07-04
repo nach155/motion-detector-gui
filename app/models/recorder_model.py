@@ -21,6 +21,9 @@ class RecorderModel(QObject):
     detect_start_notifier = pyqtSignal()
     detect_stop_notifier = pyqtSignal()
     
+    ## ログに追加
+    log_append_notifier = pyqtSignal(str)
+    
     def __init__(self):
         super().__init__()
         self.directory_path = os.getcwd()
@@ -76,8 +79,16 @@ class RecorderModel(QObject):
         self.detect_range = range
         self.dragend_notifier.emit(self.detect_range)
 
+    ## 検知開始を押す
     def set_detect_start(self) -> None:
         self.detect_start_notifier.emit()
+        self.log_append_notifier.emit("検知開始")
 
+    ## 検知終了を押す
     def set_detect_stop(self) -> None:
         self.detect_stop_notifier.emit()
+        self.log_append_notifier.emit("検知終了")
+    
+    ## ログに追加
+    def append_log(self,log:str) -> None:
+        self.log_append_notifier.emit(log)
