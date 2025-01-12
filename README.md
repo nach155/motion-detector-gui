@@ -1,8 +1,9 @@
-# movement-recorder
+# motion-detector-gui
 動体検知録画GUI
+this gui shoots a movie when its camera detect motion
 
 ## depends on
-* pySide6
+* PySide6
 * opencv-python
 * numpy
 
