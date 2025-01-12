@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QMainWindow
+from PySide6.QtWidgets import QMainWindow
 
 from .models.recorder_model import RecorderModel
 from .main_widget import MainWidget

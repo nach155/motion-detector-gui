@@ -1,11 +1,11 @@
-from PyQt6.QtWidgets import QWidget, QLineEdit, QHBoxLayout, QPushButton, QFileDialog, QMessageBox
-from PyQt6.QtCore import pyqtSignal
+from PySide6.QtWidgets import QWidget, QLineEdit, QHBoxLayout, QPushButton, QFileDialog, QMessageBox
+from PySide6.QtCore import Signal
 import os
 
 class DirectoryChoiceWidget(QWidget):
 
     # シグナル定義
-    submitted = pyqtSignal(str)
+    submitted = Signal(str)
     
     def __init__(self) -> None:
         super().__init__()

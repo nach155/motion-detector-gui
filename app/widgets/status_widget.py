@@ -1,5 +1,5 @@
-from PyQt6.QtWidgets import QWidget, QLabel, QLineEdit, QHBoxLayout, QSizePolicy
-from PyQt6.QtCore import Qt
+from PySide6.QtWidgets import QWidget, QLabel, QLineEdit, QHBoxLayout, QSizePolicy
+from PySide6.QtCore import Qt
 
 class StatusWidget(QWidget):
     def __init__(self) -> None:

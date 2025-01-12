@@ -1,15 +1,15 @@
-from PyQt6.QtWidgets import QWidget, QLabel
-from PyQt6.QtCore import pyqtSignal, QThread, pyqtSlot
-from PyQt6.QtGui import QCloseEvent, QImage, QMouseEvent, QPixmap, QPainter, QPen, QColor
+from PySide6.QtWidgets import QWidget, QLabel
+from PySide6.QtCore import Signal, QThread, Slot
+from PySide6.QtGui import QCloseEvent, QImage, QMouseEvent, QPixmap, QPainter, QPen, QColor
 import cv2, datetime, os, time
 import numpy as np
 
 class CameraWidget(QWidget):
     
-    dragend_submitted = pyqtSignal(tuple)
-    movement_submitted = pyqtSignal(bool)
+    dragend_submitted = Signal(tuple)
+    movement_submitted = Signal(bool)
     
-    log_submitted = pyqtSignal(str)
+    log_submitted = Signal(str)
     
     def __init__(self, width:int|None=None, height:int|None=None, scale:float|None=None) -> None:
         super().__init__()
@@ -80,7 +80,7 @@ class CameraWidget(QWidget):
         painter.end()
         self.img_label.setPixmap(canvas)
     
-    @pyqtSlot(np.ndarray)
+    @Slot(np.ndarray)
     def update_image(self, frame:np.ndarray):
         current_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         cv2.putText(frame, current_time, (20,20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255,255), 1, cv2.LINE_AA)
@@ -195,8 +195,8 @@ class CameraWidget(QWidget):
     
 class VideoThread(QThread):
 
-    # change_pixmap_signal = pyqtSignal(QImage)
-    frame_signal = pyqtSignal(np.ndarray)
+    # change_pixmap_signal = Signal(QImage)
+    frame_signal = Signal(np.ndarray)
     playing = True
 
     def __init__(self, width:int, height:int, scale:float,fps:int) -> None:

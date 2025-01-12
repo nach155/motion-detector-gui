@@ -1,12 +1,12 @@
-from PyQt6.QtCore import pyqtSignal
-from PyQt6.QtWidgets import QWidget, QPushButton, QVBoxLayout, QHBoxLayout
+from PySide6.QtCore import Signal
+from PySide6.QtWidgets import QWidget, QPushButton, QVBoxLayout, QHBoxLayout
 
 class ShootWidget(QWidget):
     
-    camera_start_submitted = pyqtSignal()
-    camera_stop_submitted = pyqtSignal()
-    detect_start_submitted = pyqtSignal()
-    detect_stop_submitted = pyqtSignal()
+    camera_start_submitted = Signal()
+    camera_stop_submitted = Signal()
+    detect_start_submitted = Signal()
+    detect_stop_submitted = Signal()
     
     def __init__(self) -> None:
         super().__init__()

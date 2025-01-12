@@ -1,28 +1,28 @@
-from PyQt6.QtCore import QObject, pyqtSignal
+from PySide6.QtCore import QObject, Signal
 import os
 
 class RecorderModel(QObject):
     ## 保存先エラー
-    dir_choise_error = pyqtSignal(str)
+    dir_choise_error = Signal(str)
     ## 保存先
-    dir_choise_notifier = pyqtSignal(str)
+    dir_choise_notifier = Signal(str)
     ## 画面サイズエラー
-    camera_size_error = pyqtSignal(str)
-    camera_size_notifier = pyqtSignal(tuple)
+    camera_size_error = Signal(str)
+    camera_size_notifier = Signal(tuple)
     ## カメラスタート
-    camera_start_notifier = pyqtSignal()
+    camera_start_notifier = Signal()
     ## カメラストップ
-    camera_stop_notifier = pyqtSignal()
+    camera_stop_notifier = Signal()
     ## 検知範囲
-    detect_range_notifier = pyqtSignal(tuple)
-    dragend_notifier = pyqtSignal(tuple)
+    detect_range_notifier = Signal(tuple)
+    dragend_notifier = Signal(tuple)
     
     ## 検知開始/終了
-    detect_start_notifier = pyqtSignal()
-    detect_stop_notifier = pyqtSignal()
+    detect_start_notifier = Signal()
+    detect_stop_notifier = Signal()
     
     ## ログに追加
-    log_append_notifier = pyqtSignal(str)
+    log_append_notifier = Signal(str)
     
     def __init__(self):
         super().__init__()

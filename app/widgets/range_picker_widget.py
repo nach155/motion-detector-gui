@@ -1,10 +1,10 @@
-from PyQt6.QtWidgets import QWidget, QGridLayout, QLabel, QVBoxLayout, QSpinBox, QPushButton, QHBoxLayout
-from PyQt6.QtCore import Qt, pyqtSignal
+from PySide6.QtWidgets import QWidget, QGridLayout, QLabel, QVBoxLayout, QSpinBox, QPushButton, QHBoxLayout
+from PySide6.QtCore import Qt, Signal
 
 class RangePickerWidget(QWidget):
     
-    set_range_submitted = pyqtSignal(tuple)
-    # reset_range_submitted = pyqtSignal(tuple)
+    set_range_submitted = Signal(tuple)
+    # reset_range_submitted = Signal(tuple)
     
     def __init__(self)->None:
         super().__init__()

@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QWidget, QTextEdit, QVBoxLayout
+from PySide6.QtWidgets import QWidget, QTextEdit, QVBoxLayout
 
 class LogWidget(QWidget):
     def __init__(self) -> None:

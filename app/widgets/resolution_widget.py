@@ -1,10 +1,10 @@
-from PyQt6.QtWidgets import QWidget, QComboBox, QHBoxLayout, QLabel, QMessageBox
-from PyQt6.QtCore import Qt, pyqtSignal
+from PySide6.QtWidgets import QWidget, QComboBox, QHBoxLayout, QLabel, QMessageBox
+from PySide6.QtCore import Qt, Signal
 
 class ResolutionWidget(QWidget):
     
     # シグナル定義
-    submitted = pyqtSignal(int)
+    submitted = Signal(int)
     
     def __init__(self) -> None:
         super().__init__()

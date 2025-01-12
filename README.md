@@ -2,7 +2,7 @@
 動体検知録画GUI
 
 ## depends on
-* pyqt6
+* pySide6
 * opencv-python
 * numpy
 
