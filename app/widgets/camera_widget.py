@@ -3,6 +3,7 @@ from PySide6.QtCore import Signal, QThread, Slot
 from PySide6.QtGui import QCloseEvent, QImage, QMouseEvent, QPixmap, QPainter, QPen, QColor
 import cv2, datetime, os, time
 import numpy as np
+from picamera2 import Picamera2
 
 class CameraWidget(QWidget):
     
@@ -114,7 +115,7 @@ class CameraWidget(QWidget):
     def cv_to_QImage(self, frame:np.ndarray):
         h, w, ch = frame.shape
         bytesPerLine = frame.strides[0]
-        image = QImage(frame.data, w, h, bytesPerLine, QImage.Format.Format_BGR888)
+        image = QImage(frame.data, w, h, bytesPerLine, QImage.Format.Format_RGBX8888)
         return image
         
     def on_camera_size_changed(self, size:tuple):
@@ -210,18 +211,28 @@ class VideoThread(QThread):
     def run(self) -> None:
         self.playing = True
         if self.cap is None:
-            self.cap = cv2.VideoCapture(0)
-            self.cap.set(cv2.CAP_PROP_FRAME_WIDTH,self.width)
-            self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT,self.height)
+            self.cap = Picamera2()
+            self.cap.configure(self.cap.create_preview_configuration(
+                main={
+                    # "format":'XRGB8888',
+                    "size":(self.width,self.height),
+                },
+                controls={"FrameRate":self.fps}
+            ))
+            self.cap.start()
+            # self.cap = cv2.VideoCapture(0)
+            # self.cap.set(cv2.CAP_PROP_FRAME_WIDTH,self.width)
+            # self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT,self.height)
         while self.playing:
-            ret, frame = self.cap.read()
-            if ret:
-                if self.scale < 1:
-                    frame = cv2.resize(frame,None,fx=self.scale,fy=self.scale)
-                self.frame_signal.emit(frame)
+            # ret, frame = self.cap.read()
+            frame = self.cap.capture_array()
+            # if ret:
+            if self.scale < 1:
+                frame = cv2.resize(frame,None,fx=self.scale,fy=self.scale)
+            self.frame_signal.emit(frame)
                 
-            else:
-                break
+            # else:
+            #     break
         self.cap.release()
         print("camera released.")
         self.cap = None
