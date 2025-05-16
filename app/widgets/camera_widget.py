@@ -252,6 +252,8 @@ class VideoRecorder(object):
         self.last_movement_time = None
         self.init_recording_time = None
         self.is_recording = False
+        self.video_setting = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
+        self.video_ext = ".mp4"
     
     def set_save_dir(self, save_dir:str)->None:
         self.save_dir = save_dir
@@ -259,8 +261,8 @@ class VideoRecorder(object):
     def setup_recorder(self) -> None:
         print("recorder setup")
         self.is_recording = True
-        file_name = f"{self.save_dir}/{datetime.datetime.fromtimestamp(int(time.time())).strftime('%Y-%m-%d-%H_%M_%S')}.avi"
-        self.writer = cv2.VideoWriter(file_name, cv2.VideoWriter_fourcc('D', 'I', 'V', '3'), self.fps, (self.width,self.height))
+        file_name = f"{self.save_dir}/{datetime.datetime.fromtimestamp(int(time.time())).strftime('%Y-%m-%d-%H_%M_%S')}{self.video_ext}"
+        self.writer = cv2.VideoWriter(file_name, self.video_setting, self.fps, (self.width,self.height))
         self.init_recording_time = time.time()
         
     def recorder_release(self) -> None:
