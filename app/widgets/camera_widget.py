@@ -233,7 +233,7 @@ class VideoThread(QThread):
                 
             # else:
             #     break
-        self.cap.release()
+        self.cap.close()
         print("camera released.")
         self.cap = None
         
@@ -252,8 +252,8 @@ class VideoRecorder(object):
         self.last_movement_time = None
         self.init_recording_time = None
         self.is_recording = False
-        self.video_setting = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
-        self.video_ext = ".mp4"
+        self.video_setting = cv2.VideoWriter_fourcc('D', 'I', 'V', 'X')
+        self.video_ext = ".avi"
     
     def set_save_dir(self, save_dir:str)->None:
         self.save_dir = save_dir
@@ -272,7 +272,7 @@ class VideoRecorder(object):
         self.writer = None
     
     def append_frame(self, frame:np.ndarray) -> None:
-        self.writer.write(frame)
+        self.writer.write(cv2.cvtColor(frame[:,:,:3],cv2.COLOR_BGR2RGB))
     
     def stop_more_than_margin_time(self) -> bool:
         return (time.time() - self.last_movement_time) > self.margin_time
