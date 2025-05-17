@@ -238,6 +238,7 @@ class VideoRecorder(object):
         self.height = height
         self.fps = fps
         self.margin_time = 5
+        self.max_recording_time = 300
         self.writer = None
         self.last_movement_time = None
         self.init_recording_time = None
@@ -265,4 +266,4 @@ class VideoRecorder(object):
         self.writer.write(frame)
     
     def stop_more_than_margin_time(self) -> bool:
-        return (time.time() - self.last_movement_time) > self.margin_time
+        return (time.time() - self.last_movement_time) > self.margin_time or (time.time() - self.init_recording_time) > self.max_recording_time
