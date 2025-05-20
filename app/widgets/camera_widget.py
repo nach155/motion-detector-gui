@@ -11,14 +11,14 @@ class CameraWidget(QWidget):
     
     log_submitted = Signal(str)
     
-    def __init__(self, width:int|None=None, height:int|None=None, scale:float|None=None) -> None:
+    def __init__(self, width:int|None=None, height:int|None=None, scale:float|None=None, fps:int=10) -> None:
         super().__init__()
         if width is None or height is None:
             pass
         self.initialize_UI(width,height)
-        
+        self.fps = fps
         # カメラのスレッド
-        self.video_thread:VideoThread = VideoThread(width,height,scale,10)
+        self.video_thread:VideoThread = VideoThread(width,height,scale,fps)
         self.video_thread.frame_signal.connect(self.update_image)
         
         self.mouse_press_position = (0,0)
@@ -26,7 +26,7 @@ class CameraWidget(QWidget):
         self.detect_range = (self.mouse_press_position,self.mouse_release_position)
         
         # 録画
-        self.recorder = VideoRecorder(os.getcwd(),width,height,10)
+        self.recorder = VideoRecorder(os.getcwd(),width,height,fps)
         
         # 動体検知
         self.is_detecting = False
@@ -121,7 +121,7 @@ class CameraWidget(QWidget):
         # カメラを停止
         self.video_thread.stop()
         # カメラを再定義
-        self.video_thread:VideoThread = VideoThread(size[0],size[1],size[2])
+        self.video_thread:VideoThread = VideoThread(size[0],size[1],size[2],self.fps)
         self.video_thread.frame_signal.connect(self.update_image)
         self.video_thread.start()
         
@@ -243,8 +243,8 @@ class VideoRecorder(object):
         self.last_movement_time = None
         self.init_recording_time = None
         self.is_recording = False
-        self.video_setting = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
-        self.video_ext = ".mp4"
+        self.video_setting = cv2.VideoWriter_fourcc('D', 'I', 'V', 'X')
+        self.video_ext = ".avi"
     
     def set_save_dir(self, save_dir:str)->None:
         self.save_dir = save_dir
