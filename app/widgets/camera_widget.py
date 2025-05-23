@@ -4,6 +4,8 @@ from PySide6.QtGui import QCloseEvent, QImage, QMouseEvent, QPixmap, QPainter, Q
 import cv2, datetime, os, time
 import numpy as np
 
+from app.utils.common_logic import crop_image_array
+
 class CameraWidget(QWidget):
     
     dragend_submitted = Signal(tuple)
@@ -43,28 +45,36 @@ class CameraWidget(QWidget):
         self.pen.setColor(QColor('#FF0000'))
         
     def closeEvent(self, event: QCloseEvent | None) -> None:
-        self.video_thread.terminate()
+        self.video_thread.stop()
         event.accept()
         
     def mousePressEvent(self, event: QMouseEvent | None) -> None:
-        self.mouse_press_position = self.mouse_release_position = (int(event.position().x()),int(event.position().y()))
+        self.mouse_press_position = self.mouse_release_position = (
+            np.clip(int(event.position().x()),0,640),
+            np.clip(int(event.position().y()),0,480)
+        )
         return super().mousePressEvent(event)
     
     def mouseReleaseEvent(self, event: QMouseEvent | None) -> None:
-        self.mouse_release_position = (min(int(event.position().x()),640),min(int(event.position().y()),480))
-        self.dragend_submitted.emit(
-            (self.mouse_press_position,
-             self.mouse_release_position)
+        self.mouse_release_position = (
+            np.clip(int(event.position().x()),0,640),
+            np.clip(int(event.position().y()),0,480)
         )
         self.detect_range = (
-            self.mouse_press_position,
-            self.mouse_release_position
+            (min(self.mouse_press_position[0],self.mouse_release_position[0]),
+             min(self.mouse_press_position[1],self.mouse_release_position[1])),
+            (max(self.mouse_press_position[0],self.mouse_release_position[0]),
+             max(self.mouse_press_position[1],self.mouse_release_position[1])),
         )
+        self.dragend_submitted.emit(self.detect_range)
         self.previous_frame = None
         return super().mouseReleaseEvent(event)
     
     def mouseMoveEvent(self, event: QMouseEvent | None) -> None:
-        self.mouse_release_position = (min(int(event.position().x()),640),min(int(event.position().y()),480))
+        self.mouse_release_position = (
+            np.clip(int(event.position().x()),0,640),
+            np.clip(int(event.position().y()),0,480)
+        )
         return super().mouseMoveEvent(event)
     
     def _drawRectAngle(self):
@@ -79,6 +89,7 @@ class CameraWidget(QWidget):
         )
         painter.end()
         self.img_label.setPixmap(canvas.scaled(self.img_label.width(),self.img_label.height(),Qt.AspectRatioMode.KeepAspectRatio))
+        # self.img_label.setPixmap(canvas)
     
     @Slot(np.ndarray)
     def update_image(self, frame:np.ndarray):
@@ -146,10 +157,7 @@ class CameraWidget(QWidget):
     ## 動体検知
     def move_recognize(self, frame: np.ndarray) -> tuple[np.ndarray,bool]:
         # 画像をトリミング
-        trim = frame[
-            self.detect_range[0][1]:self.detect_range[1][1],
-            self.detect_range[0][0]:self.detect_range[1][0],
-        ]
+        trim = crop_image_array(frame,self.detect_range[0],self.detect_range[1])
         # グレースケールに変換
         trim_gray= cv2.cvtColor(trim,cv2.COLOR_BGR2GRAY)
         movement = False
@@ -199,7 +207,6 @@ class VideoThread(QThread):
 
     # change_pixmap_signal = Signal(QImage)
     frame_signal = Signal(np.ndarray)
-    playing = True
 
     def __init__(self, width:int, height:int, fps:int) -> None:
         super().__init__()
@@ -207,6 +214,7 @@ class VideoThread(QThread):
         self.height = height
         self.fps = fps
         self.cap = None
+        self.playing = True
         
     def run(self) -> None:
         # self.playing = True
@@ -229,9 +237,6 @@ class VideoThread(QThread):
         self.playing = False
         self.quit()
         self.wait()
-        while not self.isFinished() and self.cap is None:
-            print("stop completed")
-            return
         
 class VideoRecorder(object):
     def __init__(self,save_dir:str, width:int, height:int, fps:int)->None:
