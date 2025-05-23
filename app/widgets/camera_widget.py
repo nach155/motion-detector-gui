@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import QWidget, QLabel
-from PySide6.QtCore import Signal, QThread, Slot
+from PySide6.QtCore import Signal, QThread, Slot, Qt
 from PySide6.QtGui import QCloseEvent, QImage, QMouseEvent, QPixmap, QPainter, QPen, QColor
 import cv2, datetime, os, time
 import numpy as np
@@ -12,14 +12,14 @@ class CameraWidget(QWidget):
     
     log_submitted = Signal(str)
     
-    def __init__(self, width:int|None=None, height:int|None=None, scale:float|None=None, fps:int=10) -> None:
+    def __init__(self, width:int|None=None, height:int|None=None, fps:int=10) -> None:
         super().__init__()
         if width is None or height is None:
             pass
         self.initialize_UI(width,height)
         self.fps = fps
         # カメラのスレッド
-        self.video_thread:VideoThread = VideoThread(width,height,scale,fps)
+        self.video_thread:VideoThread = VideoThread(width,height,fps)
         self.video_thread.frame_signal.connect(self.update_image)
         
         self.mouse_press_position = (0,0)
@@ -79,7 +79,7 @@ class CameraWidget(QWidget):
             (self.mouse_release_position[1] - self.mouse_press_position[1])
         )
         painter.end()
-        self.img_label.setPixmap(canvas)
+        self.img_label.setPixmap(canvas.scaled(self.img_label.width(),self.img_label.height(),Qt.AspectRatioMode.KeepAspectRatio))
     
     @Slot(np.ndarray)
     def update_image(self, frame:np.ndarray):
@@ -102,7 +102,7 @@ class CameraWidget(QWidget):
         elif self.recorder.writer is not None:
                 self.recorder.recorder_release()
                 self.log_submitted.emit(f"録画終了 : {current_time}")
-                
+        
         self.img_label.setPixmap(QPixmap.fromImage(self.cv_to_QImage(result_frame)))
         self._drawRectAngle()
         
@@ -120,14 +120,14 @@ class CameraWidget(QWidget):
         
     def on_camera_size_changed(self, size:tuple):
         # カメラを停止
-        self.video_thread.stop()
+        self.stop_camera()
         # カメラを再定義
-        self.video_thread:VideoThread = VideoThread(size[0],size[1],size[2],self.fps)
+        self.video_thread:VideoThread = VideoThread(size[0],size[1],self.fps)
         self.video_thread.frame_signal.connect(self.update_image)
-        self.video_thread.start()
+        self.start_camera()
         
         # 画面サイズを変更
-        self.img_label.resize(int(size[0]*size[2]),int(size[1]*size[2]))
+        # self.img_label.resize(int(size[0]),int(size[1]))
     
     def start_camera(self) -> None:
         print("start camera")
@@ -170,9 +170,11 @@ class CameraWidget(QWidget):
         # 差分があった点を画面に描く
         for target in contours:
             x, y, w, h = cv2.boundingRect(target)
+            if w < 30 or h < 30: 
+                continue # 小さな変更点は無視
+            # 検出範囲内のピクセル座標をカメラ画像のピクセル座標にする
             x = x + self.detect_range[0][0]
-            y = y + self.detect_range[0][1]
-            if w < 30 or h < 30: continue # 小さな変更点は無視
+            y = y + self.detect_range[0][1] 
             if not movement:
                 movement = not movement
                 # break
@@ -200,16 +202,15 @@ class VideoThread(QThread):
     frame_signal = Signal(np.ndarray)
     playing = True
 
-    def __init__(self, width:int, height:int, scale:float,fps:int) -> None:
+    def __init__(self, width:int, height:int, fps:int) -> None:
         super().__init__()
         self.width = width
         self.height = height
-        self.scale = scale
         self.fps = fps
         self.cap = None
         
     def run(self) -> None:
-        self.playing = True
+        # self.playing = True
         if self.cap is None:
             self.cap = Picamera2()
             self.cap.configure(self.cap.create_preview_configuration(
@@ -226,9 +227,6 @@ class VideoThread(QThread):
         while self.playing:
             # ret, frame = self.cap.read()
             frame = self.cap.capture_array()
-            # if ret:
-            if self.scale < 1:
-                frame = cv2.resize(frame,None,fx=self.scale,fy=self.scale)
             self.frame_signal.emit(frame)
                 
             # else:
@@ -240,6 +238,10 @@ class VideoThread(QThread):
     def stop(self) -> None:
         self.playing = False
         self.quit()
+        self.wait()
+        while not self.isFinished() and self.cap is None:
+            print("stop completed")
+            return
         
 class VideoRecorder(object):
     def __init__(self,save_dir:str, width:int, height:int, fps:int)->None:

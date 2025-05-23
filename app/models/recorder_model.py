@@ -27,7 +27,7 @@ class RecorderModel(QObject):
     def __init__(self):
         super().__init__()
         self.directory_path = os.getcwd()
-        self.camera_size = (640,480,1)
+        self.camera_size = (640,480)
         self.camera_start = False
         
         self.detect_range = ((0,0),(640,480))
@@ -46,13 +46,13 @@ class RecorderModel(QObject):
     def set_camera_size(self, index:int) -> None:
 
         if index == 0:
-            self.camera_size = (640,480,0.5)
+            self.camera_size = (640,480)
         elif index == 1:
-            self.camera_size = (640,480,1)
+            self.camera_size = (640,480)
         elif index == 2:
-            self.camera_size = (1280,720,0.5)
+            self.camera_size = (1280,720)
         elif index == 3:
-            self.camera_size = (1280,720,1)
+            self.camera_size = (1280,720)
         else:
             self.camera_size_error.emit("値が不正です")
             return

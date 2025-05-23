@@ -38,9 +38,9 @@ class MainWidget(QWidget):
         control_layout.addWidget(self.shoot_widget)
         control_layout.addWidget(self.log_widget)
         
-        self.camera_widget = CameraWidget(self.model.camera_size[0],self.model.camera_size[1],self.model.camera_size[2])
+        self.camera_widget = CameraWidget(self.model.camera_size[0],self.model.camera_size[1])
         self.camera_widget.setContentsMargins(0,0,0,0)
-        self.camera_widget.setFixedSize(self.model.camera_size[0]*self.model.camera_size[2],self.model.camera_size[1]*self.model.camera_size[2])
+        self.camera_widget.setFixedSize(self.model.camera_size[0],self.model.camera_size[1])
 
         self.main_layout = QHBoxLayout()
         self.main_layout.addWidget(self.camera_widget)
@@ -56,7 +56,7 @@ class MainWidget(QWidget):
         
         # カメラの解像度を切り替える
         self.resolution_widget.submitted.connect(self.model.set_camera_size)
-        # self.model.camera_size_notifier.connect(self.camera_widget.on_camera_size_changed)
+        self.model.camera_size_notifier.connect(self.camera_widget.on_camera_size_changed)
         # self.model.camera_size_notifier.connect(self.set_camera_widget_size)
         
         # カメラスタートを押す
@@ -90,6 +90,6 @@ class MainWidget(QWidget):
         self.model.log_append_notifier.connect(self.log_widget.append_log)
         
     # def set_camera_widget_size(self,size:tuple):
-    #     self.camera_widget.resize(int(size[0]*size[2]),int(size[1]*size[2]))
+    #     self.camera_widget.resize(int(size[0]),int(size[1]))
     #     print(self.camera_widget.size())
     
