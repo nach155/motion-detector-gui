@@ -26,7 +26,7 @@ class CameraWidget(QWidget):
         self.mouse_press_position = (0,0)
         self.mouse_release_position = (640,480)
         self.detect_range = (self.mouse_press_position,self.mouse_release_position)
-        
+        self.minimum_detect_square = 30
         # 録画
         self.recorder = VideoRecorder(os.getcwd(),width,height,fps)
         
@@ -177,7 +177,7 @@ class CameraWidget(QWidget):
         # 差分があった点を画面に描く
         for target in contours:
             x, y, w, h = cv2.boundingRect(target)
-            if w < 30 or h < 30: 
+            if w < self.minimum_detect_square or h < self.minimum_detect_square: 
                 continue # 小さな変更点は無視
             # 検出範囲内のピクセル座標をカメラ画像のピクセル座標にする
             x = x + self.detect_range[0][0]
@@ -202,6 +202,9 @@ class CameraWidget(QWidget):
     def stop_detect(self)->None:
         self.is_detecting = False
     
+    def set_minimum_detect_square(self,minimum:int)->None:
+        if not self.recorder.is_recording:
+            self.minimum_detect_square = minimum
     
 class VideoThread(QThread):
 

@@ -1,6 +1,7 @@
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout
 from PySide6.QtCore import Qt
 
+from .widgets.minimun_detect_square_widget import MinimumDetectSquareWidget
 from .widgets.camera_widget import CameraWidget
 from .widgets.directory_choice_widget import DirectoryChoiceWidget
 from .widgets.resolution_widget import ResolutionWidget
@@ -29,10 +30,15 @@ class MainWidget(QWidget):
         self.shoot_widget = ShootWidget()
         
         self.log_widget = LogWidget()
+
+        self.minimun_detect_square_wiget = MinimumDetectSquareWidget()
         
         control_layout = QVBoxLayout()
         control_layout.addWidget(self.directory_choice_widget)
-        control_layout.addWidget(self.resolution_widget)
+        resolution = QHBoxLayout()
+        resolution.addWidget(self.resolution_widget)
+        resolution.addWidget(self.minimun_detect_square_wiget)
+        control_layout.addLayout(resolution)
         control_layout.addWidget(self.status_widget)
         control_layout.addWidget(self.range_picker_widget)
         control_layout.addWidget(self.shoot_widget)
@@ -88,6 +94,10 @@ class MainWidget(QWidget):
         # ログ関連
         self.camera_widget.log_submitted.connect(self.model.append_log)
         self.model.log_append_notifier.connect(self.log_widget.append_log)
+
+        # 最小検出設定
+        self.minimun_detect_square_wiget.set_square_submitted.connect(self.model.set_minimum_detect_square)
+        self.model.minimum_detect_notifier.connect(self.camera_widget.set_minimum_detect_square)
         
     # def set_camera_widget_size(self,size:tuple):
     #     self.camera_widget.resize(int(size[0]),int(size[1]))

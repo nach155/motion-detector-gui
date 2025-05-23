@@ -23,6 +23,9 @@ class RecorderModel(QObject):
     
     ## ログに追加
     log_append_notifier = Signal(str)
+
+    ## 最小検出範囲
+    minimum_detect_notifier = Signal(int)
     
     def __init__(self):
         super().__init__()
@@ -31,6 +34,8 @@ class RecorderModel(QObject):
         self.camera_start = False
         
         self.detect_range = ((0,0),(640,480))
+
+        self.minimum_detect_square = 30
         
     ## 保存先を設定
     def set_save_directory_path(self, directory_path:str) -> None:
@@ -92,3 +97,8 @@ class RecorderModel(QObject):
     ## ログに追加
     def append_log(self,log:str) -> None:
         self.log_append_notifier.emit(log)
+
+    ## 最小検出
+    def set_minimum_detect_square(self, minimum:int)->None:
+        self.minimum_detect_square = minimum
+        self.minimum_detect_notifier.emit(minimum)
