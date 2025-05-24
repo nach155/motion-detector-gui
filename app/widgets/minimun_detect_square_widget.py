@@ -25,3 +25,9 @@ class MinimumDetectSquareWidget(QWidget):
     
     def changeEvent(self, value):
         self.set_square_submitted.emit(value)
+    
+    def set_disabled(self):
+        self.spin_box.setDisabled(True)
+
+    def set_enabled(self):
+        self.spin_box.setEnabled(True)

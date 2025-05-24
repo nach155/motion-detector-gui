@@ -85,11 +85,13 @@ class MainWidget(QWidget):
         self.shoot_widget.detect_start_submitted.connect(self.model.set_detect_start)
         self.model.detect_start_notifier.connect(self.camera_widget.start_detect)
         self.model.detect_start_notifier.connect(self.status_widget.set_detect_start_status)
+        self.model.detect_start_notifier.connect(self.minimun_detect_square_wiget.set_disabled)
 
         # 検知終了押す
         self.shoot_widget.detect_stop_submitted.connect(self.model.set_detect_stop)
         self.model.detect_stop_notifier.connect(self.camera_widget.stop_detect)
         self.model.detect_stop_notifier.connect(self.status_widget.set_detect_stop_status)
+        self.model.detect_stop_notifier.connect(self.minimun_detect_square_wiget.set_enabled)
         
         # ログ関連
         self.camera_widget.log_submitted.connect(self.model.append_log)
