@@ -9,7 +9,6 @@ from app.utils.common_logic import crop_image_array
 class CameraWidget(QWidget):
     
     dragend_submitted = Signal(tuple)
-    movement_submitted = Signal(bool)
     
     log_submitted = Signal(str)
     
@@ -202,6 +201,7 @@ class CameraWidget(QWidget):
     def stop_detect(self)->None:
         self.is_detecting = False
     
+    ## 最小検知サイズを設定
     def set_minimum_detect_square(self,minimum:int)->None:
         if not self.recorder.is_recording:
             self.minimum_detect_square = minimum
